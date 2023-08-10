@@ -57,7 +57,7 @@ const Register = () => {
                 setEmail("");
                 setPassword("");
 
-                await navigate('/login');
+                await navigate('/');
             }
         }catch(error){
             console.log("Register error",error);

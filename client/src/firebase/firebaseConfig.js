@@ -2,6 +2,7 @@ import firebase from "firebase/compat/app"
 import "firebase/compat/auth"
 import "firebase/compat/database"
 
+
 // Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyB6HKrm3gj7R5Dn9nLTciEEkmuK6bbQlj4",
@@ -14,7 +15,7 @@ const firebaseConfig = {
 
 
 if(!firebase.apps.length){
-    firebase.initializeApp(firebaseConfig);
+    firebase.initializeApp(firebaseConfig)
 }
 
 export default firebase
