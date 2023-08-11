@@ -1,9 +1,9 @@
 import React from 'react';
-import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Link, useNavigate } from 'react-router-dom';
 import firebase from '../firebase/firebaseConfig'
+import '../components/Form.css'
 
 const Login = () => {
     
@@ -29,7 +29,7 @@ const Login = () => {
                 setEmail("");
                 setPassword("");
 
-                await navigate('/');
+                await navigate('/home');
             }
         }catch(error){
             console.log("Login Error!",error);
@@ -38,36 +38,34 @@ const Login = () => {
 
     return (
         <>
-            <div style={{height:"100%"}} className='main d-flex justify-content-center align-items-center'>
-                <div className="card p-5" style={{"border":"2px","border-radius":"25px"}}>
-                    <div className="card-body">
+            <div className='form-main-container'>
+                <div className="form-card">
+                    <div className="form-card-body">
                         <Form onSubmit={handleSubmit}>
                             <Form.Group>
-                                <h5 style={{"margin-bottom": "20px"}}> 
-                                Login to your account
-                                </h5>
+                                <h5 className='form-title'>Login to your account</h5>
                             </Form.Group>
-                            <Form.Group className="mb-3" controlId="formBasicEmail">
+                            <Form.Group className='form-details' controlId="formBasicEmail">
                                 <Form.Label>Email</Form.Label>
                                 <Form.Control type="email" placeholder="Email" 
-                                    // value={email}
                                     onChange={(e) => setEmail(e.target.value)}
+                                    required
                                 />
                             </Form.Group>
-                            <Form.Group className="mb-3" controlId="formBasicPassword">
+                            <Form.Group className='form-details' controlId="formBasicPassword">
                                 <Form.Label>Password</Form.Label>
                                 <Form.Control type="password" placeholder="Password" 
-                                    // value={password}
                                     onChange={(e) => setPassword(e.target.value)}
+                                    required
                                 />
                             </Form.Group>
                             <Form.Group controlId="formBasicCheckbox" style={{width:"100%"}}>
-                                <Form.Check type="checkbox" label="Remember Me" />
+                                <Form.Check type="checkbox" label="Remember Me" required />
                             </Form.Group>
                             <Form.Group>
-                                <Button type="submit" style={{"background-color":"#1f4d91"}}> Login </Button>
+                                <button className='form-btn btn subscribe-btn' type="submit" style={{"background-color":"#1f4d91"}}> Login </button>
                             </Form.Group>
-                            <h7 class="widget-title" > New to MyApp <Link to='/register' style={{backgroundColor:"white"}}>Sign Up</Link>  </h7>
+                            <h7 class="form-widget-title" > New to MyApp? &nbsp; <Link to='/' style={{backgroundColor:"white","text-decoration": "none",color:"#1f4d91"}}>Sign Up</Link>  </h7>
                         </Form>
                     </div>
                 </div> 

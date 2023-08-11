@@ -1,0 +1,145 @@
+.card{
+    padding:40px;
+    margin-top: 20px;
+}
+
+th{
+    padding: 15px !important;
+}
+td{
+    padding: 10px !important;
+}
+.price,.video,.devices,.resolution{
+    padding-right: 70px !important;
+    font-weight: 600;
+    color:#323131;
+}
+
+.video-details,.resolution-details,.price-details{
+    border-bottom: 1px solid #E2E2E2;
+}
+
+.plan-container{
+    padding: 20px;
+    width: 100px;
+    height: 100px; /* Adjust as needed */
+    background-color: #7994bd;
+    color: white;
+    border: 1px solid #7994bd;
+    text-align: center; /* Center align the content */
+    cursor: pointer;
+    position: relative;
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    border-radius: 2px;
+}
+
+.plan-container.selected,.plan-container:hover,.plan-container.selected,.plan-container:hover,.plan-container:hover{
+    background-color: #1f4d91;
+    border: 1px solid #1f4d91;
+}
+
+.plan-container.selected::after,.plan-container:hover::after,.plan-container:hover::after{
+    width:10px;
+    height:10px;
+    position: absolute;
+    top: 100%;
+    content: '';
+    transform: rotate(45deg);
+    background-color: #1f4d91;
+    margin-top: -5px;
+}
+
+.plan-container:active::after,.plan-container:active::after{
+    background-color: #1f4d91;
+    color: white;
+}
+
+.plan-container:active{
+    background-color: #1f4d91;
+    color: white;
+}
+
+.mobile-details.selected,.basic-details.selected,.standard-details.selected,.premium-details.selected{
+    color: #1f4d91;
+}
+
+.basic-details,.mobile-details,.standard-details,.premium-details{
+    text-align: center; /* Center align the content */
+    color:#707070;
+    font-weight: 600;
+}
+
+.device-details{
+    padding: 0 !important;
+}
+.details{
+    font-size: 12px;
+}
+
+.button-box {
+    width: 200px;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    position: relative;
+    border-radius: 50px;
+    background: #1f4d91;
+}
+
+.toggle-btn {
+    padding: 15px 20px;
+    cursor: pointer;
+    background: transparent;
+    border: 0;
+    outline: none;
+    position: relative;
+    display: flex;
+    text-align: center;
+    color: white;
+ 
+}
+
+.toggle-btn.selected {
+    color: #1f4d91;
+}
+
+#btn {
+    left:10px;
+    top: 15%;
+    position: absolute;
+    width: 80px;
+    height: 70%;
+    color:#1f4d91;
+    background: white;
+    border-radius: 50px;
+    transition: 0.3s ease;
+}
+
+.subscribe-btn{
+    background:#1f4d91;
+    color: white;
+    border:1px solid #1f4d91 !important;
+    width: 300px;
+    padding: 10px;
+}
+.user-btn{
+    background:#1f4d91;
+    color: white;
+    border:1px solid #1f4d91 !important;
+    padding: 10px;
+}
+
+.user-btn:active,.subscribe-btn:active{
+    background:white !important;
+    color: #1f4d91 !important;
+    border:1px solid #1f4d91 !important;
+}
+
+.user-btn:active,.subscribe-btn:hover{
+    background:#1f4d91;
+    color: white; 
+}
+
+

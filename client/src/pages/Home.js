@@ -8,9 +8,8 @@ import Navbar from 'react-bootstrap/Navbar';
 import Button from 'react-bootstrap/Button';
 import {Link, useNavigate}  from 'react-router-dom';
 
+import '../components/Home.css'
 
-const Home = () => {
-    const navigate = useNavigate();
     const data = [
         {
             id: 1,
@@ -50,28 +49,37 @@ const Home = () => {
         }
     ]
 
+
+const Home = () => {
     const [userId, setUserId] = useState("");
     const [userName, setUserName] = useState("");
-    // const [planName, setPlanName] = useState("");
 
-  useEffect(() => {
-    firebase.auth().onAuthStateChanged((user) => {
-        if (user) {
-            setUserId(user.uid);
-            setUserName(user.displayName);
-            // const userRef = firebase.database().ref("users/" + user.uid);
-            // userRef.on("value", (snapshot) => {
-            //     const user = snapshot.val();
-            //     if (user) {
-            //         setPlanName(user.subscription.planName || "");
-            //     }
-            // });
-        } else {
-            setUserId("");
-            setUserName("");
-        }
-    });
-  }, [userId]);
+    const [selectedPlan] = useState(data);
+    const [planPrice, setPlanPrice] = useState(true);
+
+    const [selectedButton, setSelectedButton] = useState(null);
+    const [position, setPosition] = useState(0);
+    const [selectedColumn, setSelectedColumn] = useState(null);
+    const [selectedDetails, setSelectedDetails] = useState(null);
+    const [planId, setPlanId] = useState(0);
+
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        firebase.auth().onAuthStateChanged((user) => {
+            if (user) {
+                setUserId(user.uid);
+                setUserName(user.displayName);
+            } else {
+                setUserId("");
+                setUserName("");
+            }
+        });
+        setPosition(10);
+        setSelectedButton('left');
+        setSelectedColumn('mobile');
+        setSelectedDetails('mobile');   
+    }, [userId]);
 
     const checkout = (plan) => {
         fetch("http://localhost:5000/api/v1/create-subscription-checkout-session", {
@@ -95,11 +103,49 @@ const Home = () => {
         })
     }
 
+    const handleToggle = (newValue) => {
+        setPlanPrice(newValue);
+    };
+
     const logout = async() => {
         firebase.auth().signOut();
         navigate('/login');
     }
     
+// extra 
+    const monthlyClick = () => {
+        setPosition(10);
+        handleToggle(true);
+        setSelectedButton('left');
+    };
+
+    const yearlyClick = () => {
+        setPosition(110);
+        handleToggle(false);
+        setSelectedButton('right');
+    };
+
+    const handleMobileCell = () => {
+        setSelectedColumn('mobile');
+        setSelectedDetails('mobile'); 
+        setPlanId(0);
+    };
+
+    const handleBasicCell = () => {
+        setSelectedColumn('basic');
+        setSelectedDetails('basic');
+        setPlanId(1);  
+    };
+    const handleStandardCell = () => {
+        setSelectedColumn('standard');
+        setSelectedDetails('standard');
+        setPlanId(2);  
+    };
+    const handlePremiumCell = () => {
+        setSelectedColumn('premium');
+        setSelectedDetails('premium');
+        setPlanId(3);  
+    };
 
     return (
         <>
@@ -114,7 +160,7 @@ const Home = () => {
                                 ) : (
                                     <div>                                
                                     <Navbar.Brand>{userName}</Navbar.Brand>
-                                    <Navbar.Brand><Button onClick={logout}>LOGOUT</Button></Navbar.Brand>
+                                    <Navbar.Brand><button className='btn user-btn' onClick={logout}>LOGOUT</button></Navbar.Brand>
                                     </div>
                                 )
                             }
@@ -122,43 +168,109 @@ const Home = () => {
                     </Navbar>
                 </Container>
             </Navbar>
+            <div className='d-flex flex-col justify-content-center align-items-center'>
+                <div className='card d-flex flex-column justify-content-center align-items-center' style={{"background-color":"white"}}>
+                    <h3>Choose the right plan for you</h3>
+                    <table className='p-3'>
+                        <thead className='table-head'>
+                            <tr>
+                                <th>   
+                                    <div className="form-box">
+                                        <div className="button-box">
+                                            <div id="btn" style={{ left: position }}></div>
+                                            <button type="button" 
+                                            style={{width:"50%","display": "flex","justify-content": "center","align-items":"center"}} 
+                                            className={`toggle-btn ${selectedButton === 'left' ? 'selected' : ''}`} 
+                                            onClick={monthlyClick}>
+                                                Monthly
+                                            </button>
+                                            <button type="button" style={{width:"50%","display": "flex","justify-content": "center","align-items":"center"}} className={`toggle-btn ${selectedButton === 'right' ? 'selected' : ''}`} onClick={yearlyClick}>
+                                                Yearly
+                                            </button>
+                                        </div>
+                                    </div>
+                                </th>
+                                <th 
+                                ><div className={`plan-container ${selectedColumn === 'mobile' ? 'selected' : ''}`} onClick={handleMobileCell} >Mobile</div>
+                                </th>
+                                <th 
+                                 >
+                                 <div className={`plan-container ${selectedColumn === 'basic' ? 'selected' : ''}`} onClick={handleBasicCell} >Basic</div>
+                                 </th>
+                                <th 
+                                >
+                                <div className={`plan-container ${selectedColumn === 'standard' ? 'selected' : ''}`} onClick={handleStandardCell} >Standard</div>
+                                </th>
+                                <th 
+                                >
+                                <div className={`plan-container ${selectedColumn === 'premium' ? 'selected' : ''}`} onClick={handlePremiumCell} >Premium</div>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        <tr className='price-details'>
+                            {planPrice ? <td  className='price'>Monthly Price</td> : <td className='price'>Yearly Price</td>}                    
+                            <td className={`mobile-details ${selectedDetails === 'mobile' ? 'selected' : ''}`}>₹&nbsp;{planPrice ? selectedPlan[0].monthlyPrice : selectedPlan[0].yearlyPrice}</td>
+                            <td className={`basic-details ${selectedDetails === 'basic' ? 'selected' : ''}`}>₹&nbsp;{planPrice ? selectedPlan[1].monthlyPrice : selectedPlan[1].yearlyPrice}</td>
+                            <td className={`standard-details ${selectedDetails === 'standard' ? 'selected' : ''}`}>₹&nbsp;{planPrice ? selectedPlan[2].monthlyPrice : selectedPlan[2].yearlyPrice}</td>
+                            <td className={`premium-details ${selectedDetails === 'premium' ? 'selected' : ''}`}>₹&nbsp;{planPrice ? selectedPlan[3].monthlyPrice : selectedPlan[3].yearlyPrice}</td>
+                        </tr>
+                        <tr className='video-details'>
+                            <td className='video'>Video Quality</td>
+                            <td className={`mobile-details ${selectedDetails === 'mobile' ? 'selected' : ''}`}>Good</td>
+                            <td className={`basic-details ${selectedDetails === 'basic' ? 'selected' : ''}`}>Good</td>
+                            <td className={`standard-details ${selectedDetails === 'standard' ? 'selected' : ''}`}>Better</td>
+                            <td className={`premium-details ${selectedDetails === 'premium' ? 'selected' : ''}`}>Best</td>
 
-            <div className='d-flex justify-content-center' style={{"background-color":"white","display":"flex"}}>
-            <div className='p-3' style={{width:"275px",cursor:"default"}}>
-                <div className='p-3'>
-                    Monthly
+                        </tr>
+                        <tr className='resolution-details'>
+                            <td className='resolution'>Resolution</td>
+                            <td className={`mobile-details ${selectedDetails === 'mobile' ? 'selected' : ''}`}>480p</td>
+                            <td className={`basic-details ${selectedDetails === 'basic' ? 'selected' : ''}`}>480p</td>
+                            <td className={`standard-details ${selectedDetails === 'standard' ? 'selected' : ''}`}>1080p</td>
+                            <td className={`premium-details ${selectedDetails === 'premium' ? 'selected' : ''}`}>4K+HDR</td>
+                        </tr>
+                        <tr>
+                            <td className='devices'>Devices you can use to watch</td>
+                            <td className={`device-details mobile-details ${selectedDetails === 'mobile' ? 'selected' : ''}`}></td>
+                            <td className={`device-details basic-details ${selectedDetails === 'basic' ? 'selected' : ''}`}></td>
+                            <td className={`device-details standard-details ${selectedDetails === 'standard' ? 'selected' : ''}`}></td>
+                            <td className={`device-details premium-details ${selectedDetails === 'premium' ? 'selected' : ''}`}></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td className={`details mobile-details ${selectedDetails === 'mobile' ? 'selected' : ''}`}>Phone</td>
+                            <td className={`details basic-details ${selectedDetails === 'basic' ? 'selected' : ''}`}>Phone</td>
+                            <td className={`details standard-details ${selectedDetails === 'standard' ? 'selected' : ''}`}>Phone</td>
+                            <td className={`details premium-details ${selectedDetails === 'premium' ? 'selected' : ''}`}>Phone</td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td className={`details mobile-details ${selectedDetails === 'mobile' ? 'selected' : ''}`}>Tablet</td>
+                            <td className={`details basic-details ${selectedDetails === 'basic' ? 'selected' : ''}`}>Tablet</td>
+                            <td className={`details standard-details ${selectedDetails === 'standard' ? 'selected' : ''}`}>Tablet</td>
+                            <td className={`details premium-details ${selectedDetails === 'premium' ? 'selected' : ''}`}>Tablet</td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td className={`details mobile-details ${selectedDetails === 'mobile' ? 'selected' : ''}`}></td>
+                            <td className={`details basic-details ${selectedDetails === 'basic' ? 'selected' : ''}`}>Computer</td>
+                            <td className={`details standard-details ${selectedDetails === 'standard' ? 'selected' : ''}`}>Computer</td>
+                            <td className={`details premium-details ${selectedDetails === 'premium' ? 'selected' : ''}`}>Computer</td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td className={`details mobile-details ${selectedDetails === 'mobile' ? 'selected' : ''}`}></td>
+                            <td className={`details basic-details ${selectedDetails === 'basic' ? 'selected' : ''}`}>TV</td>
+                            <td className={`details standard-details ${selectedDetails === 'standard' ? 'selected' : ''}`}>TV</td>
+                            <td className={`details premium-details ${selectedDetails === 'premium' ? 'selected' : ''}`}>TV</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <button className='btn subscribe-btn'
+                    onClick={() => checkout(Number(planPrice ? selectedPlan[planId].monthlyPrice : selectedPlan[planId].yearlyPrice))}
+                    >Next</button>
                 </div>
-                <div className='p-3'>
-                    Monthly Price
-                </div>
-                <div className='p-3'>
-                    Video Quality
-                </div>
-                <div className='p-3'>
-                    Resolution
-                </div>
-                <div className='p-3'> 
-                    Devices you can use to watch
-                </div>
-            </div>
-            
-                {data.map((item, index) => (
-                    <div>
-                        <div key={index} style={{cursor:"default"}}>
-                        <button className='p-3' onClick={() => checkout(Number(item.monthlyPrice))} style={{width:"100px",cursor:"pointer"}}>{item.plan}</button>
-                        <div className='p-3'>{item.monthlyPrice}</div>
-                        <div className='p-3'>{item.videoQuality}</div>
-                        <div className='p-3'>{item.resolution}</div>
-                        <div>{item.devices.map((it,idx) => (
-                            <div className='p-3' key={idx}>
-                                <div>{it}</div>
-                            </div>
-                            ))}
-                        </div>
-                        </div>
-                    </div>
-
-                ))}
             </div>
         </>
     );
