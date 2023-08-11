@@ -12,7 +12,7 @@ app.use(express.json())
 app.use(bodyParser.json())
 app.use(
     cors({
-        origin: ['http://localhost:3000','https://checkout.stripe.com','https://stripe.com/cookie-settings/enforcement-mode'],
+        origin: ['http://localhost:3000'],
     })
 )
 
