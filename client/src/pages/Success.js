@@ -65,7 +65,7 @@ const Success = () => {
                 </div>
                 <div className='card-body'>
                     <div className='success-payment-details'>
-                        <h6> Premium </h6>
+                        <h6>Premium</h6>
                         <p>Phone+Tablet+Computer+TV</p>
                         <h3>₹&nbsp;7,000/yr</h3>
                         <button className='btn success-btn' onClick={()=> handlePaymentSuccess()}>Change Plan</button>
