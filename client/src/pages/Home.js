@@ -149,16 +149,15 @@ const Home = () => {
 
     return (
         <>
-            <Navbar expand="lg" className="main-navbar bg-body-tertiary sticky-lg-top" >
-                <Container>
-                    <Navbar id="basic-navbar-nav">
-                        <Nav>
-                            <Navbar.Brand><Link to='/'>Stripe</Link></Navbar.Brand>
+            <Navbar expand="lg" className="main-navbar bg-body-tertiary sticky-lg-top" style={{width:"100%"}} >
+                <Container style={{width:"100%"}}>
+                    <Navbar id="basic-navbar-nav" style={{width:"100%"}}>
+                        <Nav  style={{width:"100%",display:"flex","justify-content":"center"}}>
                             {
                                 !userId ? (
                                     <Navbar.Brand><Link to='/login'><Button >LOGIN</Button></Link></Navbar.Brand>
                                 ) : (
-                                    <div>                                
+                                    <div style={{width:"80%",display:"flex","justify-content":"space-between"}}>                                
                                     <Navbar.Brand>{userName}</Navbar.Brand>
                                     <Navbar.Brand><button className='btn user-btn' onClick={logout}>LOGOUT</button></Navbar.Brand>
                                     </div>
