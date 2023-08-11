@@ -122,7 +122,7 @@ app.post("/api/v1/payment-success", async(req, res) => {
             }catch(error){
                 console.error("Error Retrieving Subscription: ",error);
             }
-            return res.json({message: "Payment Successfull."});
+            return res.json({message: "Payment Successful."});
         }else{
             return res.json({message: "Payment Failed."});
         }
