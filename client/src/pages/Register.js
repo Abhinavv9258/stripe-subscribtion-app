@@ -144,6 +144,7 @@ const Register = () => {
     //     }
     // }
 
+    
     const handleSubmit = async(e) => {
         e.preventDefault();
          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -198,12 +199,17 @@ const Register = () => {
             });
 
             const res = await data.json();
-            if(res){
-                toast.error('Account registered successfully.', {
+            console.log(res);
+            if (res.status == '422'){
+                toast.error('User already exist, try different email!', {
                     position: toast.POSITION.TOP_RIGHT, // Set the toast position
                     autoClose: 3000, // Close the toast after 3 seconds
                 });
-                alert('Account registered successfully.');
+            }else if(res){
+                toast.success('Account registered successfully.', {
+                    position: toast.POSITION.TOP_RIGHT, // Set the toast position
+                    autoClose: 3000, // Close the toast after 3 seconds
+                });
                 navigate('/login');
             }else{
                 toast.error('Register error, please try again!', {
@@ -218,16 +224,20 @@ const Register = () => {
             });
             console.log("Server error : ",error);
         }
+        
     }
     
+
     const handleChange = (e) => {
         const {name,value} = e.target;
         setInputData({...inputData,[name]:value});
     }
 
+
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword);
     };
+
 
     return (
         <>

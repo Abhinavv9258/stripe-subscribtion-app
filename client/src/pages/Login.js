@@ -90,6 +90,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 
 const Login = () => {
+
     const navigate = useNavigate();
     const [inputData, setInputData] = React.useState({ 
         email:'',
@@ -97,6 +98,7 @@ const Login = () => {
     });
     const [showPassword, setShowPassword] = React.useState(false);
 
+    
     const handleSubmit = async(e) => {
         e.preventDefault();
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -148,14 +150,17 @@ const Login = () => {
         // }
     }
 
+
     const handleChange = (e) => {
         const {name,value} = e.target;
         setInputData({...inputData,[name]:value});
     }
 
+
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword);
     };
+
 
     return (
         <>
@@ -200,5 +205,6 @@ const Login = () => {
         </>
     );
 };
+
 
 export default Login;

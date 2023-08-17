@@ -9,7 +9,6 @@ export const addUser = async (data) => {
     }
 }
 
-
 export const userLogin = async ({ email, password }) => {
     try{
         // console.log(data);
