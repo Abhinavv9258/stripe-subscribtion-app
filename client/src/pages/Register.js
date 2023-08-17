@@ -200,12 +200,12 @@ const Register = () => {
 
             const res = await data.json();
             console.log(res);
-            if (res.status == '422'){
+            if (res.status === 422){
                 toast.error('User already exist, try different email!', {
                     position: toast.POSITION.TOP_RIGHT, // Set the toast position
                     autoClose: 3000, // Close the toast after 3 seconds
                 });
-            }else if(res){
+            }else if(res.status === 201){
                 toast.success('Account registered successfully.', {
                     position: toast.POSITION.TOP_RIGHT, // Set the toast position
                     autoClose: 3000, // Close the toast after 3 seconds

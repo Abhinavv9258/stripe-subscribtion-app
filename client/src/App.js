@@ -5,6 +5,7 @@ import Register from './pages/Register';
 import Success from './pages/Success';
 import Cancel from './pages/Cancel';
 import Dashboard from './pages/Dashboard';
+import Error from './pages/Error';
 import Payment from './pages/Payment';
 import Info from './pages/Info';
 
@@ -22,6 +23,7 @@ function App() {
                 <Route path="/cancel" element={<Cancel />} />
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/payment" element={<Payment />} />
+                <Route path="/*" element={<Error />} />
             </Routes>
         </BrowserRouter>
     );
