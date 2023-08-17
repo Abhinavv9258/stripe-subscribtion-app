@@ -3,26 +3,24 @@ const userModel = require("../models/Users.model");
 const userRoute = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-
+const auth = require('../middleware/auth')
 
 // Register API : for user registration
-userRoute.post('/register',async(req,res)=>{
-    const user = req.body;
-    if(!user.name || !user.email || !user.password){
-        return res.status(422).json({error: "Please fill all the fields properly."});
-    }
-    
-    try{
+userRoute.post('/register', async (req, res) => {
+    try {
+        const user = req.body;
+        if (!user.name || !user.email || !user.password) {
+            return res.status(422).json({ error: "Please fill all the fields properly." });
+        }
         const { email } = req.body;
-        const userData = await userModel.findOne({ email:email });
+        const userData = await userModel.findOne({ email: email });
         if (userData) {
-            return res.status(422).json({ status:422 ,error: "User already exist, try different email!" });
+            return res.status(422).json({ status: 422, error: "User already exist, try different email!" });
         }
         const data = new userModel(user);
         await data.save();
-        res.json(data);
-        res.status(201).json({ message: "User Registered Successfully." });
-    }catch(error){
+        res.status(201).json({ status: 201, message: "User Registered Successfully." });
+    } catch (error) {
         res.status(500).send(error);
     }
 });
@@ -30,27 +28,40 @@ userRoute.post('/register',async(req,res)=>{
 
 // Login API : for user login
 userRoute.post('/login', async (req, res) => {
+
+    let token;
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+        res.status(400).json({ error: "Please fill the data." });
+    }
+
     try {
-        let token;
-        const { email, password } = req.body;
-        if( !email || !password ) {
-            res.status(400).json({error:"Please fill the data."});
-        }
-        
-        const findUser = await userModel.findOne({ email:email });
+        const findUser = await userModel.findOne({ email: email });
         if (findUser) {
             const isMatch = await bcrypt.compare(password, findUser.password);
-        
-            token = await findUser.generateAuthToken();
-            console.log(token);
 
-            if(!isMatch){
-                res.status(400).json({status:400,error: "User not found, please register."});
+            if (!isMatch) {
+                res.status(422).json({ status: 422, error: "Entered wrong password or email, please try again." });
             } else {
-                res.status(201).json({ status:201,message: "User Signed in successfully."});
+                // token generate
+                token = await findUser.generateAuthToken();
+
+                // cookie generate
+                res.cookie("userCookie", token, {
+                    expires: new Date(Date.now() + 9000000),
+                    httpOnly: true
+                });
+
+                const result = {
+                    findUser,
+                    token
+                }
+
+                res.status(201).json({ status: 201, result, message: "User Signed in successfully." });
             }
-        }else{
-            res.status(400).json({status:400, error: "Credentials not found. Please register!"});
+        } else {
+            res.status(400).json({ status: 400, error: "Credentials not found. Please register!" });
         }
     } catch (error) {
         console.error('Error during login:', error);
@@ -58,16 +69,33 @@ userRoute.post('/login', async (req, res) => {
     }
 });
 
-
-// Route for fetching user data
-userRoute.get('/:userId', async (req, res) => {
+// Validate API : for user validation
+userRoute.get('/validate', auth, async (req, res) => {
     try{
-        const user = await userModel.findById(req.params.userId);
-        res.json(user);
-    }catch(error){
-        res.status(500).json({ error: 'Internal server error' });
+        const validUser = await userModel.findOne({_id: req.userId});
+        res.status(201).json({status:201, ValidUserOne: validUser});
+    } catch (error) {    
+        console.error('Error during validation:', error);
+        res.status(500).json({ status:500, error: 'Internal server error' });
     }
 });
+
+// Logout API  
+userRoute.get('/logout', auth, async (req, res) => {
+    try{
+        req.rootUser.tokens = req.rootUser.tokens.filter((curelem) => {
+            return curelem.token !== req.token
+        });
+
+        res.clearCookie("userCookie",{path:"/"});
+        req.rootUser.save();
+        res.status(201).json({status:201});
+        console.log("done");
+    }catch(error){
+        console.error('Error during logout :', error);
+        res.status(500).json({ status: 500, error: 'Internal server error' });
+    }
+})
 
 
 module.exports = { userRoute };

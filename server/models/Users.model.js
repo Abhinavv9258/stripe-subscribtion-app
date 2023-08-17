@@ -17,7 +17,6 @@ const schema = mongoose.Schema({
         type: 'string',
         required: true,
         minlength:7,
-        maxlength:15
     },
     tokens:[
         {
@@ -39,7 +38,7 @@ const schema = mongoose.Schema({
 })
 
 // we are hashing the password
-schema.pre('save', async function (next) {
+schema.pre('save', async function(next) {
     if(this.isModified('password')) {
         this.password = await bcrypt.hash(this.password,12);
     }
@@ -47,14 +46,18 @@ schema.pre('save', async function (next) {
 });
 
 // assign methods to schema
+// token generate
 schema.methods.generateAuthToken = async function(){
     try{
-        const token = jwt.sign({_id: this._id}, process.env.SECRET_KEY);
+        const token = jwt.sign({_id: this._id}, process.env.SECRET_KEY, {
+            expiresIn: "1d"
+        });
         this.tokens = this.tokens.concat({token: token});
         await this.save();
         return token;
     }catch(error){
-        console.log(error);
+        console.log("Token generating error : ", error);
+        res.status(500).json(error);
     }
 }
 
