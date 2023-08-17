@@ -404,7 +404,6 @@ const Home = () => {
                 position: toast.POSITION.TOP_RIGHT,
                 autoClose: 3000,
             });
-            console.log("user logout");
             let token = localStorage.removeItem('userDataToken');
             setUserId(false);
             setUserName(false);

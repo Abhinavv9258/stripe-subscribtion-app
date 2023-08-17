@@ -157,7 +157,6 @@ const Login = () => {
 
             const res = await data.json();
 
-            console.log(res);
             if (res.status === 201) {
                 toast.success('Successfully signed in.', {
                     position: toast.POSITION.TOP_RIGHT, // Set the toast position

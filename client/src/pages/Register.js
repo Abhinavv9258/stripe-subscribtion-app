@@ -199,7 +199,6 @@ const Register = () => {
             });
 
             const res = await data.json();
-            console.log(res);
             if (res.status === 422){
                 toast.error('User already exist, try different email!', {
                     position: toast.POSITION.TOP_RIGHT, // Set the toast position
