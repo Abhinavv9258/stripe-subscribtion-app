@@ -8,8 +8,10 @@ import Navbar from 'react-bootstrap/Navbar';
 import Button from 'react-bootstrap/Button';
 import {Link, useNavigate}  from 'react-router-dom';
 
-import '../components/Home.css'
+import '../components/Home.css';
 
+
+const Home = () => {
     const data = [
         {
             id: 1,
@@ -48,9 +50,6 @@ import '../components/Home.css'
             devices:["Phone","Tablet","Computer","TV"]
         }
     ]
-
-
-const Home = () => {
     const [userId, setUserId] = useState("");
     const [userName, setUserName] = useState("");
 
@@ -152,12 +151,12 @@ const Home = () => {
             <Navbar expand="lg" className="main-navbar bg-body-tertiary sticky-lg-top" style={{width:"100%"}} >
                 <Container style={{width:"100%"}}>
                     <Navbar id="basic-navbar-nav" style={{width:"100%"}}>
-                        <Nav  style={{width:"100%",display:"flex","justify-content":"center"}}>
+                        <Nav  style={{width:"100%",display:"flex",justifyContent:"center"}}>
                             {
                                 !userId ? (
                                     <Navbar.Brand><Link to='/login'><Button >LOGIN</Button></Link></Navbar.Brand>
                                 ) : (
-                                    <div style={{width:"80%",display:"flex","justify-content":"space-between"}}>                                
+                                    <div style={{width:"80%",display:"flex",justifyContent:"space-between"}}>                                
                                     <Navbar.Brand>{userName}</Navbar.Brand>
                                     <Navbar.Brand><button className='btn user-btn' onClick={logout}>LOGOUT</button></Navbar.Brand>
                                     </div>
@@ -168,7 +167,7 @@ const Home = () => {
                 </Container>
             </Navbar>
             <div className='d-flex flex-col justify-content-center align-items-center'>
-                <div className='card d-flex flex-column justify-content-center align-items-center' style={{"background-color":"white"}}>
+                <div className='card d-flex flex-column justify-content-center align-items-center' style={{backgroundColor:"white"}}>
                     <h3>Choose the right plan for you</h3>
                     <table className='p-3'>
                         <thead className='table-head'>
@@ -178,12 +177,12 @@ const Home = () => {
                                         <div className="button-box">
                                             <div id="btn" style={{ left: position }}></div>
                                             <button type="button" 
-                                            style={{width:"50%","display": "flex","justify-content": "center","align-items":"center"}} 
+                                            style={{width:"50%",display: "flex",justifyContent: "center",alignItems:"center"}} 
                                             className={`toggle-btn ${selectedButton === 'left' ? 'selected' : ''}`} 
                                             onClick={monthlyClick}>
                                                 Monthly
                                             </button>
-                                            <button type="button" style={{width:"50%","display": "flex","justify-content": "center","align-items":"center"}} className={`toggle-btn ${selectedButton === 'right' ? 'selected' : ''}`} onClick={yearlyClick}>
+                                            <button type="button" style={{width:"50%","display": "flex",justifyContent: "center",alignItems:"center"}} className={`toggle-btn ${selectedButton === 'right' ? 'selected' : ''}`} onClick={yearlyClick}>
                                                 Yearly
                                             </button>
                                         </div>
@@ -267,6 +266,7 @@ const Home = () => {
                         </tbody>
                     </table>
                     <button className='btn subscribe-btn'
+                    
                     onClick={() => checkout(Number(planPrice ? selectedPlan[planId].monthlyPrice : selectedPlan[planId].yearlyPrice))}
                     >Next</button>
                 </div>

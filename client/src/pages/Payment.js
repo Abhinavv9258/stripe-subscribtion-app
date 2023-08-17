@@ -82,26 +82,28 @@ const Payment = () => {
                             <p>Enter your credit or debit card details below</p>    
                             <div className='card-details'>
                                 <input className='card-number' placeholder='Card Number'></input>
-                                <input className='card-date' type="text" maxlength="4" placeholder="MM/YY" onChange={handleExpirationChange}></input>
-                                <input className='card-cvc' type="text" maxlength="3" placeholder="CVC"></input>
+                                <input className='card-date' type="text" maxLength="4" placeholder="MM/YY" onChange={handleExpirationChange}></input>
+                                <input className='card-cvc' type="text" maxLength="3" placeholder="CVC"></input>
                             </div>
                             <button className='btn submit-btn'>Confirm Payment</button>
                         </div>
                         <div className='order-summary'>
                             <h6>Order Summary</h6>
                             <table style={{margin:0}}>
-                                <tr>
-                                    <td>Plan Name</td>
-                                    <td>Plan </td>
-                                </tr>
-                                <tr>
-                                    <td>Billing Cycle</td>
-                                    <td>Plan </td>
-                                </tr>
-                                <tr>
-                                    <td>Plan Price</td>
-                                    <td>Plan </td>
-                                </tr>
+                                <tbody>
+                                    <tr>
+                                        <td>Plan Name</td>
+                                        <td>Plan </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Billing Cycle</td>
+                                        <td>Plan </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Plan Price</td>
+                                        <td>Plan </td>
+                                    </tr>
+                                </tbody>
                             </table>
                         </div>
                 </div>
