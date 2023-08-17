@@ -11,17 +11,14 @@ userRoute.post('/register',async(req,res)=>{
     if(!user.name || !user.email || !user.password){
         return res.status(422).json({error: "Please fill all the fields properly."});
     }
-    const { email } = req.body;
-    const userData = await userModel.findOne({ email:email });
-    if (userData) {
-        return res.status(422).json({ error: "User already exist, try different email!" });
-    }
     
     try{
+        const { email } = req.body;
+        const userData = await userModel.findOne({ email:email });
+        if (userData) {
+            return res.status(422).json({ status:422 ,error: "User already exist, try different email!" });
+        }
         const data = new userModel(user);
-        // const data = new userModel(user.name, user.email, user.password);
-
-        // password hashing function
         await data.save();
         res.json(data);
         res.status(201).json({ message: "User Registered Successfully." });
@@ -46,15 +43,14 @@ userRoute.post('/login', async (req, res) => {
         
             token = await findUser.generateAuthToken();
             console.log(token);
-            
-            console.log('Successfully saved session ',email);
+
             if(!isMatch){
-                res.status(400).json({error: "Invalid Credentials."});
+                res.status(400).json({status:400,error: "User not found, please register."});
             } else {
-                res.json({ message: "User Signed in successfully"});
+                res.status(201).json({ status:201,message: "User Signed in successfully."});
             }
         }else{
-            res.status(400).json({error: "Invalid Credentials."});
+            res.status(400).json({status:400, error: "Credentials not found. Please register!"});
         }
     } catch (error) {
         console.error('Error during login:', error);
