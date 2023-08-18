@@ -32,9 +32,10 @@ const stripeSession = async (plan) => {
                     quantity: 1
                 },
             ],
-            success_url: "http://localhost:3000/success",
-            cancel_url: "http://localhost:3000/cancel"
+            success_url: `${process.env.REACT_APP_CLIENT_URL}/success`,
+            cancel_url: `${process.env.REACT_APP_CLIENT_URL}/cancel`
         });
+        // res.json({ id: session.id })
         return session;
     } catch (error) {
         return error;
@@ -60,7 +61,6 @@ app.use(express.urlencoded({ limit: '50mb', extended: true }));
 app.use("/user", userRoute);
 // app.use("/subscription", subscriptionRoute);
 
-
 /* checkout success  api */
 app.post("/api/v1/create-subscription-checkout-session", async (req, res) => {
     const { plan, userId } = req.body;
@@ -75,15 +75,25 @@ app.post("/api/v1/create-subscription-checkout-session", async (req, res) => {
     else if (plan == 100) planId = mobileMonthly;
     else if (plan == 1000) planId = mobileYearly;
 
-
     try {
         const session = await stripeSession(planId);
         const user = await userModel.findOne({ _id: userId });
+        const current_period_start = new Date();
+        const current_period_end = new Date();
+
+        if (planId == premiumMonthly || planId == standardMonthly || planId == basicMonthly || planId == mobileMonthly){
+            current_period_end.setDate(current_period_end.getDate() + 30);
+        }
+        if (planId == premiumYearly || planId == standardYearly || planId == basicYearly || planId == mobileYearly){
+            current_period_end.setDate(current_period_end.getDate() + 365);
+        }
+        const durationInSeconds = current_period_end - current_period_start;
+        const durationInDays = (moment.duration(durationInSeconds, 'seconds').asDays())/1000;
 
         if (user) {
-            await updateUserSubscription(user._id, session.id, planId);
-            return res.status(201).json({ status: 201, sessionId: session.id, planId: planId, userId: user._id, session });
-            // res.json({ session });
+            await updateUserSubscription(user._id, session.id, planId, current_period_start, current_period_end, durationInDays);
+            // return res.status(201).json({ status: 201, sessionId: session.id, planId: planId, userId: user._id, session });
+            res.json({ session });
         } else {
             res.status(404).json({ message: "User not found" });
         }
@@ -92,7 +102,7 @@ app.post("/api/v1/create-subscription-checkout-session", async (req, res) => {
     }
 });
 
-const updateUserSubscription = async (userId, sessionId, planId) => {
+const updateUserSubscription = async (userId, sessionId, planId, current_period_start, current_period_end, durationInDays) => {
     try {
         // Fetch the user based on the userId
         const user = await userModel.findById(userId);
@@ -102,12 +112,15 @@ const updateUserSubscription = async (userId, sessionId, planId) => {
             const newSubscription = {
                 planId: planId,
                 sessionId: sessionId,
-                enrolledAt: new Date()
+                enrolledAt: new Date(),
+                startDate: current_period_start,
+                endDate: current_period_end,
+                durationInDays: durationInDays,
             };
 
             // Update the subscriptionEnrolled array in the user document
             user.subscriptionEnrolled.push(newSubscription);
-            console.log(userModel.findOne({sessionId: sessionId}));
+            await updateUserSubscriptionDetails(userId, newSubscription.sessionId, newSubscription.planId, newSubscription.startDate, newSubscription.endDate, newSubscription.durationInDays);
             // Save the updated user document
             await user.save();
         }
@@ -116,45 +129,6 @@ const updateUserSubscription = async (userId, sessionId, planId) => {
         throw error; // Rethrow the error for proper error handling
     }
 };
-
-
-/* payment success  api */
-app.post("/api/v1/payment-success", async (req, res) => {
-    const { sessionId, userId } = req.body;
-
-    try {
-        const session = await stripe.checkout.sessions.retrieve(sessionId);
-
-        if (session.payment_status === 'paid') {
-            const subscriptionId = session.subscription;
-
-            try {
-                const subscription = await stripe.subscriptions.retrieve(subscriptionId);
-                const user = await getUserFromMongoDB(userId);
-
-                if (user) {
-                    const planId = subscription.plan.id;
-                    const startDate = moment.unix(subscription.current_period_start).format('YYYY-MM-DD');
-                    const endDate = moment.unix(subscription.current_period_end).format('YYYY-MM-DD');
-                    const durationInSeconds = subscription.current_period_end - subscription.current_period_start;
-                    const durationInDays = moment.duration(durationInSeconds, 'seconds').asDays();
-
-                    await updateUserSubscriptionDetails(user._id, sessionId, planId, startDate, endDate, durationInDays);
-                } else {
-                    console.error("User not found in MongoDB");
-                }
-
-            } catch (error) {
-                console.error("Error Retrieving Subscription: ", error);
-            }
-            return res.json({ message: "Payment Successful." });
-        } else {
-            return res.json({ message: "Payment Failed." });
-        }
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-});
 
 
 async function updateUserSubscriptionDetails(userId, sessionId, planId, startDate, endDate, durationInDays) {

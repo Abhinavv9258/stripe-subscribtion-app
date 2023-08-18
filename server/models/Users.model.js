@@ -35,12 +35,21 @@ const schema = mongoose.Schema({
             },
             sessionId: {
                 type: 'string',
-                required: true
             },
             enrolledAt: {
                 type: Date,
                 default: Date.now
-            }
+            },
+            startDate: {
+                type: 'string',
+            },
+
+            endDate: {
+                type: 'string',
+            },
+            durationInDays: {
+                type: 'string',
+            },
         }
     ],
     createdAt: {
