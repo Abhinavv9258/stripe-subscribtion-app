@@ -11,6 +11,10 @@ import { Link, useNavigate } from 'react-router-dom';
 import '../components/Home.css';
 import { URL } from '../App';
 import { ToastContainer, toast } from 'react-toastify';
+import { loadStripe } from '@stripe/stripe-js';
+
+// Initialize Stripe with your public key
+const stripePromise = loadStripe('pk_test_51NdC7RSGjf6Wd71UXh5D0dfZNpTG2tOnfzvQm8cTX1jeL8mzfVQ0zPCzPYMLvCXj8Znj1zgCwnhz0QnHCi5cZ9AS00NewKhpJh');
 
 
 // const Home = () => {
@@ -359,14 +363,14 @@ const Home = () => {
         setSelectedDetails('mobile');
     }, []);
 
-    const checkout = (plan) => {
-        fetch("http://localhost:5000/api/v1/create-subscription-checkout-session", {
+    const checkout = async(plan) => {
+            const response = await fetch(`${URL}/api/v1/create-subscription-checkout-session`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
             mode: "cors",
-            body: JSON.stringify({ plan: plan, customerId: userId }),
+            body: JSON.stringify({ plan: plan, userId: userId }),
         })
             .then((res) => {
                 if (res.ok) return res.json();
