@@ -1,20 +1,13 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
-import firebase from '../firebase/firebaseConfig';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
-import Button from 'react-bootstrap/Button';
 import { Link, useNavigate } from 'react-router-dom';
-
 import '../components/Home.css';
 import { URL } from '../App';
-import { ToastContainer, toast } from 'react-toastify';
-import { loadStripe } from '@stripe/stripe-js';
-
-// Initialize Stripe with your public key
-const stripePromise = loadStripe('pk_test_51NdC7RSGjf6Wd71UXh5D0dfZNpTG2tOnfzvQm8cTX1jeL8mzfVQ0zPCzPYMLvCXj8Znj1zgCwnhz0QnHCi5cZ9AS00NewKhpJh');
+import { toast } from 'react-toastify';
 
 
 // const Home = () => {
@@ -333,6 +326,8 @@ const Home = () => {
     const [selectedDetails, setSelectedDetails] = useState(null);
     const [planId, setPlanId] = useState(0);
 
+    const [sessionId, setSessionId] = React.useState("");
+
     const navigate = useNavigate();
 
     const DashboardValid = async () => {
@@ -351,6 +346,7 @@ const Home = () => {
         } else {
             setUserId(data.ValidUserOne._id);
             setUserName(data.ValidUserOne.name);
+            setSessionId(token);
             navigate('/home');
         }
     }
@@ -364,7 +360,7 @@ const Home = () => {
     }, []);
 
     const checkout = async(plan) => {
-            const response = await fetch(`${URL}/api/v1/create-subscription-checkout-session`, {
+        await fetch(`${URL}/api/v1/create-subscription-checkout-session`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -381,7 +377,7 @@ const Home = () => {
                 window.location = session.url;
             })
             .catch((e) => {
-                console.log(e);
+                console.log("error: ",e);
             })
     }
 
@@ -576,7 +572,6 @@ const Home = () => {
                         </tbody>
                     </table>
                     <button className='btn subscribe-btn'
-
                         onClick={() => checkout(Number(planPrice ? selectedPlan[planId].monthlyPrice : selectedPlan[planId].yearlyPrice))}
                     >Next</button>
                 </div>

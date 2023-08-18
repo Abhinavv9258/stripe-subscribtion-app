@@ -4,10 +4,8 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Success from './pages/Success';
 import Cancel from './pages/Cancel';
-import Dashboard from './pages/Dashboard';
 import Error from './pages/Error';
-import Payment from './pages/Payment';
-import Info from './pages/Info';
+// import Payment from './pages/Payment';
 
 export const URL = process.env.REACT_APP_SERVER_URL;
 
@@ -17,12 +15,10 @@ function App() {
             <Routes>
                 <Route path="/" element={<Register />} />
                 <Route path="/home" element={<Home />} />
-                <Route path="/info" element={<Info />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/success" element={<Success />} />
                 <Route path="/cancel" element={<Cancel />} />
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/payment" element={<Payment />} />
+                {/* <Route path="/payment" element={<Payment />} /> */}
                 <Route path="/*" element={<Error />} />
             </Routes>
         </BrowserRouter>
