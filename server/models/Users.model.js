@@ -26,7 +26,23 @@ const schema = mongoose.Schema({
             }
         }
     ],
-    subscriptionEnrolled:[{type: mongoose.Schema.Types.ObjectId, ref: 'subscription'}],
+    subscriptionEnrolled:[
+        {   
+            planId: {
+                // type: mongoose.Schema.Types.ObjectId,
+                type:'string'
+                // ref: 'subscription'
+            },
+            sessionId: {
+                type: 'string',
+                required: true
+            },
+            enrolledAt: {
+                type: Date,
+                default: Date.now
+            }
+        }
+    ],
     createdAt: {
         type: Date,
         default: Date.now

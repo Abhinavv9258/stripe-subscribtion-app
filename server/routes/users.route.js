@@ -25,7 +25,6 @@ userRoute.post('/register', async (req, res) => {
     }
 });
 
-
 // Login API : for user login
 userRoute.post('/login', async (req, res) => {
 
@@ -86,7 +85,6 @@ userRoute.get('/logout', auth, async (req, res) => {
         req.rootUser.tokens = req.rootUser.tokens.filter((curelem) => {
             return curelem.token !== req.token
         });
-
         res.clearCookie("userCookie",{path:"/"});
         req.rootUser.save();
         res.status(201).json({status:201});

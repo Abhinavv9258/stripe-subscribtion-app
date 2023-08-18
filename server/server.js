@@ -52,6 +52,7 @@ const stripeSession = async(plan) => {
     }
 }
 
+
 app.post("/api/v1/create-subscription-checkout-session", async(req,res) => {
     const {plan,customerId} = req.body;
     let planId = null;
