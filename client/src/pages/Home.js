@@ -374,9 +374,9 @@ const Home = () => {
                 return res.json().then((json) => Promise.reject(json));
             })
             .then(({ session }) => {
-                // window.location = session.url;
+                window.location = session.url;
                 
-                navigate(session.url);
+                // navigate(session.url);
             })
             .catch((e) => {
                 console.log("error: ",e);
