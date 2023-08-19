@@ -11,6 +11,7 @@ const moment = require("moment");
 const userModel = require("./models/Users.model");
 
 const stripe = require('stripe')(process.env.STRIPE_PRIVATE_KEY);
+const webhookSecret = process.env.WEBHOOK_SECRET;
 
 
 // stripe price id
@@ -21,7 +22,7 @@ const [premiumMonthly, premiumYearly] = ['price_1NdCcvSGjf6Wd71U6Jfy9Nhj', 'pric
 
 
 /* create subscription api */
-const stripeSession = async (plan) => {
+const createStripeSession = async (plan) => {
     try {
         const session = await stripe.checkout.sessions.create({
             mode: "subscription",
@@ -36,12 +37,113 @@ const stripeSession = async (plan) => {
             cancel_url: `${process.env.REACT_APP_CLIENT_URL}/cancel`
         });
         // res.json({ id: session.id })
-        console.log("sessionn url : ",session.url);
         return session;
     } catch (error) {
         return error;
     }
 }
+
+/* retrieve subscription data*/
+// const retrieveStripeSession = async (plan) => {
+//     try {
+//         const subscription = await stripe.subscriptions.retrieve(
+//             'sub_1NgZvJ2eZvKYlo2CQMdLeLAZ'
+//         );
+//         // res.json({ id: session.id })
+//         return subscription;
+//     } catch (error) {
+//         return error;
+//     }
+// }
+
+const retrievedDataStore = {};
+
+app.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (req, res) => {
+    const sig = req.headers['stripe-signature'];
+
+    let event;
+
+    try {
+        event = stripe.webhooks.constructEvent(req.body, sig, webhookSecret);
+    } catch (err) {
+        return res.status(400).send(`Webhook Error: ${err.message}`);
+    }
+
+    // Handle the event
+    switch (event.type) {
+        case 'checkout.session.async_payment_failed':
+            const checkoutSessionAsyncPaymentFailed = event.data.object;
+            // Then define and call a function to handle the event checkout.session.async_payment_failed
+            break;
+        case 'checkout.session.async_payment_succeeded':
+            const checkoutSessionAsyncPaymentSucceeded = event.data.object;
+            // Then define and call a function to handle the event checkout.session.async_payment_succeeded
+            break;
+        case 'checkout.session.completed':
+            const checkoutSessionCompleted = event.data.object;
+            // Then define and call a function to handle the event checkout.session.completed
+            break;
+        case 'subscription_schedule.aborted':
+            const subscriptionScheduleAborted = event.data.object;
+            // Then define and call a function to handle the event subscription_schedule.aborted
+            break;
+        case 'subscription_schedule.canceled':
+            const subscriptionScheduleCanceled = event.data.object;
+            // Then define and call a function to handle the event subscription_schedule.canceled
+            break;
+        case 'subscription_schedule.completed':
+            const subscriptionScheduleCompleted = event.data.object;
+            // Then define and call a function to handle the event subscription_schedule.completed
+            break;
+        case 'subscription_schedule.created':
+            const subscriptionScheduleCreated = event.data.object;
+            // Then define and call a function to handle the event subscription_schedule.created
+            break;
+        // ... handle other event types
+        default:
+            console.log(`Unhandled event type ${event.type}`);
+    }
+
+    if (event.type === 'checkout.session.completed') {
+        const session = event.data.object;
+        const subscription = await stripe.subscriptions.retrieve(session.subscription);
+
+        const checkoutSummary = {
+            sessionId: session.id,
+            paymentStatus: session.payment_status,
+            // Other relevant session properties
+        };
+
+        const subscriptionDetails = {
+            subscriptionId: subscription.id,
+            planId: subscription.items.data[0].price.id,
+            // Other relevant subscription properties
+        };
+
+        // Store the data in your database or perform any necessary actions
+        // ...
+        retrievedDataStore[session.id] = {
+            checkoutSummary,
+            subscriptionDetails,
+        };
+
+
+        // Send a response back to Stripe
+        res.status(200).json({ received: true });
+        res.send();
+    }
+});
+
+// Add a new route to fetch retrieved data
+app.get('/retrieved-data/:sessionId', (req, res) => {
+    const sessionId = req.params.sessionId;
+    // Retrieve data from the temporary store based on sessionId
+    const retrievedData = retrievedDataStore[sessionId];
+    if (!retrievedData) {
+        return res.status(404).json({ message: 'Data not found' });
+    }
+    res.json(retrievedData);
+});
 
 //importing routes
 const { userRoute } = require("./routes/users.route");
@@ -77,19 +179,19 @@ app.post("/api/v1/create-subscription-checkout-session", async (req, res) => {
     else if (plan == 1000) planId = mobileYearly;
 
     try {
-        const session = await stripeSession(planId);
+        const session = await createStripeSession(planId);
         const user = await userModel.findOne({ _id: userId });
         const current_period_start = new Date();
         const current_period_end = new Date();
 
-        if (planId == premiumMonthly || planId == standardMonthly || planId == basicMonthly || planId == mobileMonthly){
+        if (planId == premiumMonthly || planId == standardMonthly || planId == basicMonthly || planId == mobileMonthly) {
             current_period_end.setDate(current_period_end.getDate() + 30);
         }
-        if (planId == premiumYearly || planId == standardYearly || planId == basicYearly || planId == mobileYearly){
+        if (planId == premiumYearly || planId == standardYearly || planId == basicYearly || planId == mobileYearly) {
             current_period_end.setDate(current_period_end.getDate() + 365);
         }
         const durationInSeconds = current_period_end - current_period_start;
-        const durationInDays = (moment.duration(durationInSeconds, 'seconds').asDays())/1000;
+        const durationInDays = (moment.duration(durationInSeconds, 'seconds').asDays()) / 1000;
 
         if (user) {
             await updateUserSubscription(user._id, session.id, planId, current_period_start, current_period_end, durationInDays);
