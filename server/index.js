@@ -36,6 +36,7 @@ const stripeSession = async (plan) => {
             cancel_url: `${process.env.REACT_APP_CLIENT_URL}/cancel`
         });
         // res.json({ id: session.id })
+        console.log("sessionn url : ",session.url);
         return session;
     } catch (error) {
         return error;

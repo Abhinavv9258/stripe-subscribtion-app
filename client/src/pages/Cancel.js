@@ -13,11 +13,6 @@ const Cancel = () => {
         navigate("/home");
     };
 
-    const handlePaymentCancel = () => {
-        alert("Are you sure you want to cancel?");
-        navigate("/home");
-    };
-
     return (
         <>
             <div
