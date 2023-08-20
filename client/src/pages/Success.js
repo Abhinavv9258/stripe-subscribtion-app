@@ -53,33 +53,34 @@
 
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { URL } from '../App';
 
 const Success = () => {
-    const { sessionId } = useParams();
-    const [checkoutSummary, setCheckoutSummary] = useState({});
-    const [subscriptionDetails, setSubscriptionDetails] = useState({});
+    // const { sessionId } = useParams();
+    // const [checkoutSummary, setCheckoutSummary] = useState({});
+    // const [subscriptionDetails, setSubscriptionDetails] = useState({});
 
-    useEffect(() => {
-        // Fetch the retrieved data based on the sessionId
-        fetch(`/retrieved-data/${sessionId}`)
-            .then(response => response.json())
-            .then(data => {
-                setCheckoutSummary(data.checkoutSummary);
-                setSubscriptionDetails(data.subscriptionDetails);
-            });
-    }, [sessionId]);
+    // useEffect(() => {
+    //     // Fetch the retrieved data based on the sessionId
+    //     fetch(`${URL}/retrieved-data/${sessionId}`)
+    //         .then(response => response.json())
+    //         .then(data => {
+    //             setCheckoutSummary(data.checkoutSummary);
+    //             setSubscriptionDetails(data.subscriptionDetails);
+    //         });
+    // }, [sessionId]);
 
     return (
         <div>
             <h1>Payment Successful!</h1>
             <h2>Checkout Summary:</h2>
-            <p>Session ID: {checkoutSummary.sessionId}</p>
-            <p>Payment Status: {checkoutSummary.paymentStatus}</p>
+            {/* <p>Session ID: {checkoutSummary.sessionId}</p> */}
+            {/* <p>Payment Status: {checkoutSummary.paymentStatus}</p> */}
             Display other checkout summary properties
 
             <h2>Subscription Details:</h2>
-            <p>Subscription ID: {subscriptionDetails.subscriptionId}</p>
-            <p>Plan ID: {subscriptionDetails.planId}</p>
+            {/* <p>Subscription ID: {subscriptionDetails.subscriptionId}</p> */}
+            {/* <p>Plan ID: {subscriptionDetails.planId}</p> */}
             Display other subscription details properties
         </div>
     );

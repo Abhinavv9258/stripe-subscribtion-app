@@ -10,6 +10,24 @@ const moment = require("moment");
 
 const userModel = require("./models/Users.model");
 
+//importing routes
+const { userRoute } = require("./routes/users.route");
+
+app.use(cors({
+    credentials: true,
+    origin: [`${process.env.REACT_APP_CLIENT_URL}`, `${process.env.REACT_APP_SERVER_URL}`]
+}));
+
+app.use(cookieParser());
+app.use(express.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ limit: "50mb", extended: true, parameterLimit: 50000 }));
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
+
+// calling API
+app.use("/user", userRoute);
+
+
 const stripe = require('stripe')(process.env.STRIPE_PRIVATE_KEY);
 const webhookSecret = process.env.WEBHOOK_SECRET;
 
@@ -58,81 +76,84 @@ const createStripeSession = async (plan) => {
 
 const retrievedDataStore = {};
 
-app.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (req, res) => {
-    const sig = req.headers['stripe-signature'];
+// app.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (req, res) => {
+//     const sig = req.headers['stripe-signature'];
 
-    let event;
+//     let event;
 
-    try {
-        event = stripe.webhooks.constructEvent(req.body, sig, webhookSecret);
-    } catch (err) {
-        return res.status(400).send(`Webhook Error: ${err.message}`);
-    }
+//     try {
+//         event = stripe.webhooks.constructEvent(req.body, sig, webhookSecret);
+//     } catch (err) {
+//         return res.status(400).send(`Webhook Error: ${err.message}`);
+//     }
 
-    // Handle the event
-    switch (event.type) {
-        case 'checkout.session.async_payment_failed':
-            const checkoutSessionAsyncPaymentFailed = event.data.object;
-            // Then define and call a function to handle the event checkout.session.async_payment_failed
-            break;
-        case 'checkout.session.async_payment_succeeded':
-            const checkoutSessionAsyncPaymentSucceeded = event.data.object;
-            // Then define and call a function to handle the event checkout.session.async_payment_succeeded
-            break;
-        case 'checkout.session.completed':
-            const checkoutSessionCompleted = event.data.object;
-            // Then define and call a function to handle the event checkout.session.completed
-            break;
-        case 'subscription_schedule.aborted':
-            const subscriptionScheduleAborted = event.data.object;
-            // Then define and call a function to handle the event subscription_schedule.aborted
-            break;
-        case 'subscription_schedule.canceled':
-            const subscriptionScheduleCanceled = event.data.object;
-            // Then define and call a function to handle the event subscription_schedule.canceled
-            break;
-        case 'subscription_schedule.completed':
-            const subscriptionScheduleCompleted = event.data.object;
-            // Then define and call a function to handle the event subscription_schedule.completed
-            break;
-        case 'subscription_schedule.created':
-            const subscriptionScheduleCreated = event.data.object;
-            // Then define and call a function to handle the event subscription_schedule.created
-            break;
-        // ... handle other event types
-        default:
-            console.log(`Unhandled event type ${event.type}`);
-    }
+//     // Handle the event
+//     // switch (event.type) {
+//     //     case 'checkout.session.async_payment_failed':
+//     //         const checkoutSessionAsyncPaymentFailed = event.data.object;
+//     //         // Then define and call a function to handle the event checkout.session.async_payment_failed
+//     //         break;
+//     //     case 'checkout.session.async_payment_succeeded':
+//     //         const checkoutSessionAsyncPaymentSucceeded = event.data.object;
+//     //         // Then define and call a function to handle the event checkout.session.async_payment_succeeded
+//     //         break;
+//     //     case 'checkout.session.completed':
+//     //         const checkoutSessionCompleted = event.data.object;
+//     //         // Then define and call a function to handle the event checkout.session.completed
+//     //         break;
+//     //     case 'subscription_schedule.aborted':
+//     //         const subscriptionScheduleAborted = event.data.object;
+//     //         // Then define and call a function to handle the event subscription_schedule.aborted
+//     //         break;
+//     //     case 'subscription_schedule.canceled':
+//     //         const subscriptionScheduleCanceled = event.data.object;
+//     //         // Then define and call a function to handle the event subscription_schedule.canceled
+//     //         break;
+//     //     case 'subscription_schedule.completed':
+//     //         const subscriptionScheduleCompleted = event.data.object;
+//     //         // Then define and call a function to handle the event subscription_schedule.completed
+//     //         break;
+//     //     case 'subscription_schedule.created':
+//     //         const subscriptionScheduleCreated = event.data.object;
+//     //         // Then define and call a function to handle the event subscription_schedule.created
+//     //         break;
+//     //     // ... handle other event types
+//     //     default:
+//     //         console.log(`Unhandled event type ${event.type}`);
+//     // }
 
-    if (event.type === 'checkout.session.completed') {
-        const session = event.data.object;
-        const subscription = await stripe.subscriptions.retrieve(session.subscription);
+//     if (event.type === 'checkout.session.completed') {
+//         const session = event.data.object;
+//         const subscription = await stripe.subscriptions.retrieve(session.subscription);
 
-        const checkoutSummary = {
-            sessionId: session.id,
-            paymentStatus: session.payment_status,
-            // Other relevant session properties
-        };
+//         const checkoutSummary = {
+//             sessionId: session.id,
+//             paymentStatus: session.payment_status,
+//             // Other relevant session properties
+//         };
 
-        const subscriptionDetails = {
-            subscriptionId: subscription.id,
-            planId: subscription.items.data[0].price.id,
-            // Other relevant subscription properties
-        };
+//         const subscriptionDetails = {
+//             subscriptionId: subscription.id,
+//             planId: subscription.items.data[0].price.id,
+//             // Other relevant subscription properties
+//         };
 
-        // Store the data in your database or perform any necessary actions
-        // ...
-        retrievedDataStore[session.id] = {
-            checkoutSummary,
-            subscriptionDetails,
-        };
+//         // Store the data in your database or perform any necessary actions
+//         // ...
+//         retrievedDataStore[session.id] = {
+//             checkoutSummary,
+//             subscriptionDetails,
+//         };
 
 
-        // Send a response back to Stripe
-        res.status(200).json({ received: true });
-        res.send();
-    }
-});
+//         // Send a response back to Stripe
+//         res.status(200).json({ received: true });
+//         res.send();
+//     }else{
+//         console.log("Webhook error");
+//         res.status(200).json("Webhook error");
+//     }
+// });
 
 // Add a new route to fetch retrieved data
 app.get('/retrieved-data/:sessionId', (req, res) => {
@@ -145,24 +166,6 @@ app.get('/retrieved-data/:sessionId', (req, res) => {
     res.json(retrievedData);
 });
 
-//importing routes
-const { userRoute } = require("./routes/users.route");
-// const { subscriptionRoute } = require("./routes/subscriptions.route");
-
-app.use(cors({
-    credentials: true,
-    origin: [`${process.env.REACT_APP_CLIENT_URL}`, `${process.env.REACT_APP_SERVER_URL}`]
-}));
-
-app.use(cookieParser());
-app.use(express.urlencoded({ extended: true }));
-app.use(bodyParser.urlencoded({ limit: "50mb", extended: true, parameterLimit: 50000 }));
-app.use(express.json({ limit: '50mb' }));
-app.use(express.urlencoded({ limit: '50mb', extended: true }));
-
-// calling API
-app.use("/user", userRoute);
-// app.use("/subscription", subscriptionRoute);
 
 /* checkout success  api */
 app.post("/api/v1/create-subscription-checkout-session", async (req, res) => {

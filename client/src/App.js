@@ -16,7 +16,7 @@ function App() {
                 <Route path="/" element={<Register />} />
                 <Route path="/home" element={<Home />} />
                 <Route path="/login" element={<Login />} />
-                <Route path="/success/:sessionId" element={<Success />} />
+                <Route path="/success" element={<Success />} />
                 <Route path="/cancel" element={<Cancel />} />
                 {/* <Route path="/payment" element={<Payment />} /> */}
                 <Route path="/*" element={<Error />} />
