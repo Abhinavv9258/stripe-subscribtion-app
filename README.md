@@ -22,11 +22,7 @@ Here's a list of its key features and pages: User Registration and Login, Plan S
 It transforms subscription management into a straightforward and secure process. Clients can confidently subscribe to their desired billing plans, with the assurance that their payments and data are handled with utmost care. Embrace this app to enjoy hassle-free subscription management for your services.<br/><br/>
 
 
-# Getting Started with Create React App
-
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
-
-## Available Scripts
+# Getting Started with this project
 
 In the project directory, you can run:
 
