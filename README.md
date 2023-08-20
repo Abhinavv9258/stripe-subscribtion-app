@@ -1,4 +1,27 @@
 # stripe-subscription-app
+
+### Deployed Site Link
+
+Website Link : [https://stripe-subscription-app.onrender.com](https://stripe-subscription-app.onrender.com)
+
+### Description
+
+This app is a user-friendly subscription management app designed to streamline the process of subscribing to various billing plans. Similar to services like Amazon Prime, it provides a seamless experience for clients to select and manage their preferred subscription plans, whether on a monthly or yearly basis. Powered by Stripe's secure payment gateway, clients can trust the safety of their payment information while enjoying a hassle-free subscription experience.
+The portal's tech stack includes the following technologies:<br/>
+<ul type = "square">
+  <li><strong>Front-end:</strong> ReactJS </li>
+  <li><strong>UI Library:</strong> Bootstrap</li>
+  <li><strong>Programming Languages:</strong> JavaScript, Node.js </li>  
+  <li><strong>Payment Gateway:</strong> Stripe Integration </li>
+  <li><strong>Database:</strong> MongoDB </li>
+  <li><strong>Version Control:</strong> Git </li>
+</ul>
+
+This is a user-friendly subscription management app designed to streamline the process of subscribing to various billing plans. Similar to services like Amazon Prime, it provides a seamless experience for clients to select and manage their preferred subscription plans, whether on a monthly or yearly basis. Powered by Stripe's secure payment gateway, clients can trust the safety of their payment information while enjoying a hassle-free subscription experience. <br/><br/>
+Here's a list of its key features and pages: User Registration and Login, Plan Selection, Billing Flexibility, Secure Payment Processing, Stripe Integration - Subscription Creation, Subscription Details Display, Cancellation Capability.<br/><br/>
+It transforms subscription management into a straightforward and secure process. Clients can confidently subscribe to their desired billing plans, with the assurance that their payments and data are handled with utmost care. Embrace this app to enjoy hassle-free subscription management for your services.<br/><br/>
+
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
