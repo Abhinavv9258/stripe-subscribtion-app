@@ -46,7 +46,7 @@ It correctly bundles React in production mode and optimizes the build for the be
 The build is minified and the filenames include the hashes.\
 Your app is ready to be deployed!
 
-### `To run this project you need to create .env file in both client and server folder`
+### `To run this project : ` You need to create .env file in both client and server folder
 <strong>For Client Folder:</strong>
 <ul type = "square">
   <li><strong>REACT_APP_SERVER_URL</strong> Back-end Server URL (http://localhost:3030) </li>
